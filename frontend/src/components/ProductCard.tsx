@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Platform, Pressable, StyleSheet, Text, View, ActivityIndicator, type ImageSourcePropType } from "react-native";
+import {
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+  type ImageSourcePropType,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+
 import { useFavorites } from "@/context/FavoritesContext";
+import { useCart } from "@/context/CartContext";
 import { resolveImageSource } from "@/utils/resolveImageSource";
 
 type ProductCardProps = {
@@ -27,6 +37,8 @@ export default function ProductCard({
   containerClassName,
 }: ProductCardProps) {
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { addItem } = useCart();
+
   const favorite = isFavorite(id);
   const resolvedImageSource = resolveImageSource(imageSource);
 
@@ -36,14 +48,30 @@ export default function ProductCard({
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+
   useEffect(() => {
     setLoading(true);
     setError(false);
   }, [imageSource]);
 
+  const handleAdd = () => {
+    addItem({
+      id,
+      name,
+      subtitle,
+      price,
+      imageSource,
+    });
+
+    onAdd?.();
+  };
+
   const cardBody = (
     <>
-      <View className="relative items-center justify-center overflow-hidden bg-slate-50 p-3" style={{ height: 150 }}>
+      <View
+        className="relative items-center justify-center overflow-hidden bg-slate-50 p-3"
+        style={{ height: 150 }}
+      >
         {!error ? (
           <>
             <Image
@@ -57,6 +85,7 @@ export default function ProductCard({
               }}
               accessibilityIgnoresInvertColors
             />
+
             {loading && (
               <View className="absolute inset-0 items-center justify-center">
                 <ActivityIndicator size="small" color="#0f172a" />
@@ -76,7 +105,9 @@ export default function ProductCard({
           }}
           className="absolute right-3 top-3 h-10 w-10 overflow-hidden rounded-full border border-white/70"
           accessibilityRole="button"
-          accessibilityLabel={favorite ? `Unfavorite ${name}` : `Favorite ${name}`}
+          accessibilityLabel={
+            favorite ? `Unfavorite ${name}` : `Favorite ${name}`
+          }
           accessibilityState={{ selected: favorite }}
           hitSlop={8}
         >
@@ -96,20 +127,27 @@ export default function ProductCard({
       </View>
 
       <View className="px-4 pb-4">
-        <Text className="mt-1 text-base font-bold text-slate-900" numberOfLines={1}>
+        <Text
+          className="mt-1 text-base font-bold text-slate-900"
+          numberOfLines={1}
+        >
           {name}
         </Text>
+
         <Text className="mt-0.5 text-xs text-slate-500" numberOfLines={1}>
           {subtitle}
         </Text>
 
         <View className="mt-0 flex-row items-center justify-between">
-          <Text className="text-lg font-extrabold text-slate-900">{price}</Text>
+          <Text className="text-lg font-extrabold text-slate-900">
+            {price}
+          </Text>
+
           <Pressable
             className="h-9 w-9 items-center justify-center rounded-full bg-emerald-600"
             onPress={(e) => {
               e.stopPropagation?.();
-              onAdd?.();
+              handleAdd();
             }}
             accessibilityRole="button"
             accessibilityLabel={`Add ${name}`}
@@ -121,8 +159,9 @@ export default function ProductCard({
     </>
   );
 
-  return (
-    Platform.OS === "web" ? (
+  // ---- FINAL WRAPPER (web + mobile safe) ----
+  if (Platform.OS === "web") {
+    return (
       <View
         className={className}
         onClick={onPress}
@@ -138,16 +177,18 @@ export default function ProductCard({
       >
         {cardBody}
       </View>
-    ) : (
-      <Pressable
-        className={className}
-        onPress={onPress}
-        disabled={!onPress}
-        accessibilityRole={onPress ? "button" : undefined}
-        accessibilityLabel={onPress ? `View ${name}` : undefined}
-      >
-        {cardBody}
-      </Pressable>
-    )
+    );
+  }
+
+  return (
+    <Pressable
+      className={className}
+      onPress={onPress}
+      disabled={!onPress}
+      accessibilityRole={onPress ? "button" : undefined}
+      accessibilityLabel={onPress ? `View ${name}` : undefined}
+    >
+      {cardBody}
+    </Pressable>
   );
 }

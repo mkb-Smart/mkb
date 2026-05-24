@@ -1,8 +1,11 @@
 import React from "react";
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useCart } from "@/context/CartContext";
 
 export default function TabLayout() {
+  const { cartCount } = useCart();
+
   return (
     <Tabs
       screenOptions={{
@@ -36,6 +39,15 @@ export default function TabLayout() {
           shadowRadius: 14,
           elevation: 6,
         },
+        tabBarBadgeStyle: {
+          fontSize: 10,
+          fontWeight: "700",
+          minWidth: 18,
+          height: 18,
+          borderRadius: 9,
+          backgroundColor: "#dc2626",
+          color: "#ffffff",
+        },
       }}
     >
       <Tabs.Screen
@@ -53,12 +65,13 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="explore"
+        name="cart"
         options={{
-          title: "Explore",
+          title: "Cart",
+          tabBarBadge: cartCount > 0 ? cartCount : undefined,
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={focused ? "search" : "search-outline"}
+              name={focused ? "cart" : "cart-outline"}
               size={24}
               color={color}
             />
@@ -67,12 +80,12 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="cart"
+        name="ai"
         options={{
-          title: "Cart",
+          title: "AI assist",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={focused ? "cart" : "cart-outline"}
+              name={focused ? "chatbubble-ellipses" : "chatbubbles-outline"}
               size={24}
               color={color}
             />
@@ -107,6 +120,10 @@ export default function TabLayout() {
           ),
         }}
       />
+
+      <Tabs.Screen name="myAddress" options={{ href: null }} />
+      <Tabs.Screen name="addNewAddress" options={{ href: null }} />
+      <Tabs.Screen name="editProfile" options={{ href: null }} />
     </Tabs>
   );
 }
