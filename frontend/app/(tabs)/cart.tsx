@@ -65,9 +65,6 @@ function CartCard({
 
           <Pressable
             onPress={() => onRemove(item.id)}
-            hitSlop={10}
-            accessibilityRole="button"
-            accessibilityLabel={`Remove ${item.name}`}
             className="h-9 w-9 items-center justify-center rounded-full bg-slate-50"
           >
             <Ionicons name="trash-outline" size={18} color="#475569" />
@@ -87,8 +84,6 @@ function CartCard({
           <View className="flex-row items-center rounded-full border border-slate-200 bg-slate-50 px-1 py-1">
             <Pressable
               onPress={() => onDecrement(item.id)}
-              accessibilityRole="button"
-              accessibilityLabel={`Decrease ${item.name}`}
               className="h-8 w-8 items-center justify-center rounded-full bg-white"
             >
               <Ionicons name="remove" size={18} color="#15803d" />
@@ -100,8 +95,6 @@ function CartCard({
 
             <Pressable
               onPress={() => onIncrement(item.id)}
-              accessibilityRole="button"
-              accessibilityLabel={`Increase ${item.name}`}
               className="h-8 w-8 items-center justify-center rounded-full bg-white"
             >
               <Ionicons name="add" size={18} color="#15803d" />
@@ -116,25 +109,34 @@ function CartCard({
 export default function CartScreen() {
   const router = useRouter();
   const pathname = usePathname();
-  const { cartItems, removeItem, incrementItem, decrementItem, clearCart, cartCount } = useCart();
+  const {
+    cartItems,
+    removeItem,
+    incrementItem,
+    decrementItem,
+    clearCart,
+    cartCount,
+  } = useCart();
+
   const [promoCode, setPromoCode] = useState("FESTIVE20");
   const [appliedCode, setAppliedCode] = useState("FESTIVE20");
 
   const subtotal = useMemo(
     () =>
       cartItems.reduce(
-        (sum, item) => sum + (Number(item.price.replace(/[^0-9.]/g, "")) || 0) * item.quantity,
+        (sum, item) =>
+          sum +
+          (Number(item.price.replace(/[^0-9.]/g, "")) || 0) * item.quantity,
         0
       ),
     [cartItems]
   );
 
-  const bundleSavings = useMemo(
-    () => subtotal * 0.1,
-    [subtotal]
-  );
+  const bundleSavings = useMemo(() => subtotal * 0.1, [subtotal]);
 
-  const promoDiscount = appliedCode === PROMO_CODE ? subtotal * DISCOUNT_RATE : 0;
+  const promoDiscount =
+    appliedCode === PROMO_CODE ? subtotal * DISCOUNT_RATE : 0;
+
   const taxes = subtotal * TAX_RATE;
   const total = subtotal - promoDiscount + DELIVERY_FEE + taxes;
 
@@ -144,155 +146,28 @@ export default function CartScreen() {
 
   return (
     <View className="flex-1 bg-[#f7fbf0]">
-      <View className="border-b border-emerald-100 bg-white px-4 pb-4 pt-14 shadow-sm">
-        <View className="flex-row items-center justify-between">
-          <View className="flex-row items-center gap-3">
-            <View className="h-11 w-11 items-center justify-center rounded-full bg-emerald-50">
-              <Ionicons name="menu" size={22} color="#15803d" />
-            </View>
-            <View>
-              <Text className="text-xs font-semibold uppercase tracking-[2px] text-emerald-700">
-                Shopping Cart
-              </Text>
-              <Text className="text-2xl font-extrabold text-emerald-900">
-                My Cart ({cartCount} items)
-              </Text>
-            </View>
-          </View>
+      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 140 }}>
+        {cartItems.map((item) => (
+          <CartCard
+            key={item.id}
+            item={item}
+            onRemove={removeItem}
+            onIncrement={incrementItem}
+            onDecrement={decrementItem}
+          />
+        ))}
 
-          <Pressable
-            onPress={() => router.push({ pathname: "/notificationPop", params: { returnTo: pathname } })}
-            accessibilityRole="button"
-            accessibilityLabel="Notifications"
-            className="h-11 w-11 items-center justify-center rounded-full bg-emerald-50"
-          >
-            <Ionicons name="notifications-outline" size={22} color="#15803d" />
-          </Pressable>
-        </View>
-      </View>
-
-      <ScrollView
-        className="flex-1"
-        contentContainerClassName="px-4 pb-36 pt-5"
-        showsVerticalScrollIndicator={false}
-      >
-        <View className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-4">
-          <View className="flex-row items-start gap-3">
-            <View className="h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
-              <Ionicons name="sparkles" size={20} color="#15803d" />
-            </View>
-            <View className="flex-1">
-              <Text className="text-xs font-bold uppercase tracking-[1.6px] text-emerald-700">
-                AI Assistant Tip
-              </Text>
-              <Text className="mt-1 text-sm leading-5 text-slate-700">
-                You&apos;ve saved {formatLkr(bundleSavings)} on this order by choosing
-                items with current bundle offers.
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        <View className="mt-5 gap-4">
-          {cartItems.length > 0 ? (
-            cartItems.map((item) => (
-              <CartCard
-                key={item.id}
-                item={item}
-                onRemove={removeItem}
-                onIncrement={incrementItem}
-                onDecrement={decrementItem}
-              />
-            ))
-          ) : (
-            <View className="items-center rounded-2xl border border-dashed border-emerald-200 bg-white px-6 py-10">
-              <Ionicons name="cart-outline" size={36} color="#94a3b8" />
-              <Text className="mt-3 text-lg font-bold text-slate-900">
-                Your cart is empty
-              </Text>
-              <Text className="mt-1 text-center text-sm text-slate-500">
-                Add items from the catalog to see them here.
-              </Text>
-            </View>
-          )}
-        </View>
-
-        <View className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <Text className="mb-2 text-xs font-bold uppercase tracking-[1.6px] text-slate-500">
-            Promo Code
-          </Text>
-          <View className="flex-row items-center gap-3">
-            <TextInput
-              value={promoCode}
-              onChangeText={setPromoCode}
-              placeholder="Enter code"
-              placeholderTextColor="#94a3b8"
-              autoCapitalize="characters"
-              className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900"
-            />
-            <Pressable
-              onPress={handleApplyPromo}
-              accessibilityRole="button"
-              accessibilityLabel="Apply promo code"
-              className="rounded-xl bg-emerald-600 px-5 py-3"
-            >
-              <Text className="text-sm font-bold text-white">Apply</Text>
-            </Pressable>
-          </View>
-          <Text className="mt-2 text-xs font-semibold text-slate-500">
-            {appliedCode === PROMO_CODE
-              ? `Applied ${PROMO_CODE}`
-              : `Try ${PROMO_CODE} for 20% off.`}
-          </Text>
-        </View>
-
-        <View className="mt-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <Text className="text-xl font-extrabold text-slate-900">Order Summary</Text>
-
-          <View className="mt-4 gap-3">
-            <View className="flex-row items-center justify-between">
-              <Text className="text-sm text-slate-500">Subtotal</Text>
-              <Text className="text-sm text-slate-700">{formatLkr(subtotal)}</Text>
-            </View>
-
-            <View className="flex-row items-center justify-between">
-              <Text className="text-sm text-emerald-700">Discount ({PROMO_CODE})</Text>
-              <Text className="text-sm text-emerald-700">- {formatLkr(promoDiscount)}</Text>
-            </View>
-
-            <View className="flex-row items-center justify-between">
-              <Text className="text-sm text-slate-500">Delivery Fee</Text>
-              <Text className="text-sm text-slate-700">{formatLkr(DELIVERY_FEE)}</Text>
-            </View>
-
-            <View className="flex-row items-center justify-between">
-              <Text className="text-sm text-slate-500">Estimated Taxes</Text>
-              <Text className="text-sm text-slate-700">{formatLkr(taxes)}</Text>
-            </View>
-
-            <View className="my-2 h-px bg-slate-200" />
-
-            <View className="flex-row items-end justify-between">
-              <Text className="text-lg font-bold text-slate-900">Total</Text>
-              <Text className="text-2xl font-extrabold tracking-tight text-slate-900">
-                {formatLkr(total)}
-              </Text>
-            </View>
-          </View>
+        <View className="mt-6">
+          <Text className="text-lg font-bold">Total: {formatLkr(total)}</Text>
         </View>
       </ScrollView>
 
-      <View className="absolute bottom-24 left-0 right-0 border-t border-slate-200 bg-white px-4 pb-8 pt-3">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Proceed to checkout"
-          className="h-14 flex-row items-center justify-center rounded-2xl bg-emerald-700"
-          onPress={clearCart}
-        >
-          <Text className="mr-2 text-base font-bold text-white">Proceed to Checkout</Text>
-          <Ionicons name="arrow-forward" size={20} color="#ffffff" />
-        </Pressable>
-      </View>
+      <Pressable
+        onPress={clearCart}
+        className="absolute bottom-10 left-4 right-4 h-14 items-center justify-center rounded-2xl bg-emerald-700"
+      >
+        <Text className="text-white font-bold">Checkout</Text>
+      </Pressable>
     </View>
   );
 }

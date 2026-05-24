@@ -20,9 +20,9 @@ function MenuRow({
   return (
     <Pressable
       onPress={onPress}
-      className={`flex-row items-center justify-between px-4 py-4 ${showDivider ? "border-t border-[#bfcaba]" : ""}`}
-      accessibilityRole="button"
-      accessibilityLabel={label}
+      className={`flex-row items-center justify-between px-4 py-4 ${
+        showDivider ? "border-t border-[#bfcaba]" : ""
+      }`}
     >
       <View className="flex-row items-center gap-4">
         <Ionicons name={icon} size={22} color="#0d631b" />
@@ -52,9 +52,13 @@ function StatsItem({
 }) {
   return (
     <View
-      className={`flex-1 items-center justify-center py-2 ${divider ? "border-x border-[#bfcaba]" : ""}`}
+      className={`flex-1 items-center justify-center py-2 ${
+        divider ? "border-x border-[#bfcaba]" : ""
+      }`}
     >
-      <Text className="text-[24px] font-extrabold text-[#0d631b]">{value}</Text>
+      <Text className="text-[24px] font-extrabold text-[#0d631b]">
+        {value}
+      </Text>
       <Text className="mt-1 text-[12px] font-bold uppercase tracking-wider text-slate-500 text-center">
         {label}
       </Text>
@@ -68,6 +72,7 @@ export default function Profile() {
 
   return (
     <SafeAreaView className="flex-1 bg-[#f7fbf0]" edges={["top"]}>
+      {/* Header */}
       <View className="flex-row items-center justify-between border-b border-[#bfcaba] bg-[#f7fbf0] px-4 py-3">
         <View className="flex-row items-center gap-3">
           <View className="h-10 w-10 items-center justify-center rounded-full bg-white border border-[#bfcaba]">
@@ -85,8 +90,6 @@ export default function Profile() {
               params: { returnTo: pathname },
             })
           }
-          accessibilityRole="button"
-          accessibilityLabel="Notifications"
           className="h-10 w-10 items-center justify-center rounded-full bg-white border border-[#bfcaba]"
         >
           <Ionicons name="notifications-outline" size={22} color="#40493d" />
@@ -102,19 +105,10 @@ export default function Profile() {
           paddingBottom: 120,
         }}
       >
+        {/* Profile Section */}
         <View className="items-center">
-          <View className="relative">
-            <View className="h-24 w-24 overflow-hidden rounded-full border-2 border-[#a3f69c] bg-white shadow-sm items-center justify-center">
-              <Text className="text-3xl font-extrabold text-[#0d631b]">A</Text>
-            </View>
-
-            {/*<Pressable
-							className="absolute -bottom-1 -right-1 h-9 w-9 items-center justify-center rounded-full bg-[#0d631b] shadow-md"
-							accessibilityRole="button"
-							accessibilityLabel="Edit profile photo"
-						>
-							<Ionicons name="pencil" size={16} color="white" />
-						</Pressable>*/}
+          <View className="h-24 w-24 items-center justify-center rounded-full border-2 border-[#a3f69c] bg-white">
+            <Text className="text-3xl font-extrabold text-[#0d631b]">A</Text>
           </View>
 
           <View className="mt-4 items-center">
@@ -129,8 +123,6 @@ export default function Profile() {
           <Pressable
             onPress={() => router.push("/editProfile")}
             className="mt-4 rounded-xl border border-[#0d631b] px-5 py-2.5"
-            accessibilityRole="button"
-            accessibilityLabel="Edit profile"
           >
             <Text className="text-[12px] font-bold uppercase tracking-wider text-[#0d631b]">
               Edit Profile
@@ -138,12 +130,14 @@ export default function Profile() {
           </Pressable>
         </View>
 
+        {/* Stats */}
         <View className="mt-6 flex-row overflow-hidden rounded-xl border border-[#bfcaba] bg-white">
           <StatsItem value="124" label="Total Orders" />
           <StatsItem value="42" label="Saved Items" divider />
           <StatsItem value="18" label="Reviews" />
         </View>
 
+        {/* Account Settings */}
         <View className="mt-6 space-y-3">
           <Text className="px-1 text-[12px] font-bold uppercase tracking-wider text-slate-500">
             Account Settings
@@ -151,15 +145,22 @@ export default function Profile() {
 
           <View className="overflow-hidden rounded-xl border border-[#bfcaba] bg-white">
             <MenuRow icon="bag-handle-outline" label="My Orders" />
+
             <MenuRow
               icon="location-outline"
               label="My Addresses"
               showDivider
               onPress={() => router.push("/myAddress")}
             />
-            <MenuRow icon="card-outline" label="Payment Methods" showDivider />
+
+            <MenuRow
+              icon="card-outline"
+              label="Payment Methods"
+              showDivider
+            />
           </View>
 
+          {/* Preferences */}
           <Text className="px-1 pt-2 text-[12px] font-bold uppercase tracking-wider text-slate-500">
             Preferences
           </Text>
@@ -175,12 +176,14 @@ export default function Profile() {
                 })
               }
             />
+
             <MenuRow
               icon="language-outline"
               label="Language"
               value="English"
               showDivider
             />
+
             <MenuRow
               icon="help-circle-outline"
               label="Help Center"
@@ -188,12 +191,9 @@ export default function Profile() {
             />
           </View>
 
+          {/* Logout */}
           <View className="pt-2">
-            <Pressable
-              className="flex-row items-center justify-center gap-2 rounded-xl border border-[#bfcaba] bg-white px-4 py-4"
-              accessibilityRole="button"
-              accessibilityLabel="Logout"
-            >
+            <Pressable className="flex-row items-center justify-center gap-2 rounded-xl border border-[#bfcaba] bg-white px-4 py-4">
               <Ionicons name="log-out-outline" size={20} color="#dc2626" />
               <Text className="text-base font-bold text-red-600">Logout</Text>
             </Pressable>

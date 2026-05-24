@@ -2,7 +2,11 @@ import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function Header({ onNotificationsPress }: { onNotificationsPress?: () => void }) {
+type HeaderProps = {
+  onNotificationsPress?: () => void;
+};
+
+export default function Header({ onNotificationsPress }: HeaderProps) {
   return (
     <View className="flex-row items-center justify-between bg-white px-4 py-3">
       <Pressable

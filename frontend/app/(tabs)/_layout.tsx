@@ -64,8 +64,6 @@ export default function TabLayout() {
         }}
       />
 
-     
-
       <Tabs.Screen
         name="cart"
         options={{
@@ -81,7 +79,7 @@ export default function TabLayout() {
         }}
       />
 
-       <Tabs.Screen
+      <Tabs.Screen
         name="ai"
         options={{
           title: "AI assist",
@@ -123,20 +121,9 @@ export default function TabLayout() {
         }}
       />
 
-      <Tabs.Screen
-        name="myAddress"
-        options={{ href: null }}
-      />
-
-      <Tabs.Screen
-        name="addNewAddress"
-        options={{ href: null }}
-      />
-
-      <Tabs.Screen
-        name="editProfile"
-        options={{ href: null }}
-      />
+      <Tabs.Screen name="myAddress" options={{ href: null }} />
+      <Tabs.Screen name="addNewAddress" options={{ href: null }} />
+      <Tabs.Screen name="editProfile" options={{ href: null }} />
     </Tabs>
   );
 }
